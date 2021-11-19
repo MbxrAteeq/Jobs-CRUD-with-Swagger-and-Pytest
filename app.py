@@ -2,24 +2,16 @@ import os
 import re
 import datetime
 import jwt as jwt1
-# from models import *
-# from models import Jobs
 import geopy.distance 
 from apispec import APISpec
 from functools import wraps
 from flasgger import Swagger
 from sqlalchemy.sql import func
+from sqlalchemy import DateTime
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask import Flask, request, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-
-
-from sqlalchemy import DateTime
-from sqlalchemy.sql import func
-
-
-
 
 app = Flask(__name__)
 
@@ -34,6 +26,8 @@ db = SQLAlchemy(app)
 # Marshmallow to serialize Data
 ma = Marshmallow(app)
 
+swagger = Swagger(app)
+#http://localhost:5000/apidocs/
 
 
 class Users(db.Model):
@@ -78,8 +72,7 @@ def token_required(f):
 
 
 def validations(username, email, password):
-    data = Users.query.filter((Users.username == username) | (Users.email == email))
-
+    data = Users.query.filter((Users.userName == username) | (Users.email == email)).first()
     if data:
         return ("Username and email must be unique")
 
@@ -90,9 +83,12 @@ def validations(username, email, password):
         return ("Password must be 10 characters")
 
 
+
 @app.route('/signUp', methods=['POST'])
 def signUp():
-
+    """
+    file: swaggerTemplates/signUp.yml
+    """
     data = request.get_json()
     msg = validations(data['userName'], data['email'], data['password'])
     if msg:
@@ -129,7 +125,9 @@ def refresh():
 #for jwt authentication
 @app.route('/signIn', methods=['POST'])
 def signIn():
-
+    """
+    file: swaggerTemplates/signIn.yml
+    """
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password: 
@@ -163,14 +161,15 @@ jobs_schema = JobsSchema(many=True)
 #Jobs API CRUD Operation
 
 #Jobs GET All jobs with kilometer filtration  using lat and long Endpoint
-@app.route('/jobs', methods=['GET'])
+@app.route('/alljobs', methods=['GET'])
 @token_required
 def get_all_job(current_user):
-
+    """
+    file: swaggerTemplates/getJobs.yml
+    """
     lat = request.args.get('latitude', type=float , default=None)
     longi = request.args.get('longitude', type=float , default=None)
     km = request.args.get('kilometer', type=int , default=15)
-
     if lat and longi:
         nearbyJobs = Jobs.query.filter(
             (func.degrees(
@@ -180,7 +179,6 @@ def get_all_job(current_user):
                     func.cos(func.radians(longi-Jobs.longitude))
                 )
             ) * 60 * 1.1515 * 1.609344) <= km)
-
         output = []
         for jobs in nearbyJobs:
             # Lat and long were in decimal form and Jsonify cant serilaze decimal so we convert them to string.
@@ -188,6 +186,10 @@ def get_all_job(current_user):
             jobs.longitude = str(jobs.longitude)
             output.append(jobs)
         job_data = jobs_schema.dump(output)
+
+        if not job_data:
+            return jsonify({"msg":"No Data Found"}), 404
+
         return jsonify({'message':job_data}), 200
 
     # For complete data from Jobs table
@@ -207,7 +209,9 @@ def get_all_job(current_user):
 @app.route('/jobs', methods=['POST'])
 @token_required
 def add_job(current_user):
-
+    """
+    file: swaggerTemplates/addJobs.yml
+    """
     data = request.get_json()
 
     new_job = Jobs(userId = current_user.id, jobTitle = data['jobTitle'], jobDesc = data['jobDesc'], jobRate = data['jobRate'], 
@@ -223,7 +227,9 @@ def add_job(current_user):
 @app.route("/jobs/<id>", methods=['PUT'])
 @token_required
 def edit_job(current_user, id):
-
+    """
+    file: swaggerTemplates/editJobs.yml
+    """
     data = request.get_json()
     value = Jobs.query.filter_by(id=id).first()
 
@@ -246,14 +252,17 @@ def edit_job(current_user, id):
 @app.route("/jobs/<id>", methods=['DELETE'])
 @token_required
 def del_job(current_user, id):
+    """
+    file: swaggerTemplates/delJobs.yml
+    """
     cId = str(current_user.id)
     job = Jobs.query.filter(id==Jobs.id, cId == Jobs.userId).first()
 
     if not job:
         return jsonify({'msg':'No Data or Unathorized User for Deletion'}), 404
 
-        job.isActive = False
-        db.session.commit()
+    job.isActive = False
+    db.session.commit()
     return jsonify({'message':'Delete Operation Completed'}), 200
 
 if __name__ == '__main__':        

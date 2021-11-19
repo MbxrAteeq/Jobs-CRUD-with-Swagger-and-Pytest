@@ -1,0 +1,30 @@
+    description: Create New User.
+    parameters:
+        - 
+          in: body
+          name: body
+          required: true
+          schema:
+            id : users
+            required:
+              - firstName
+              - lastName
+              - userName
+              - email
+              - password
+            properties:
+              firstName:
+                type: string
+              lastName:
+                type: string
+              userName:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+    responses:
+      200:
+        description: User Created Successfully.
+      401:
+        description: Something Wrong.

@@ -1,0 +1,35 @@
+    description: Add a Job.
+    parameters:
+        - 
+          name: x-access-tokens
+          in: header
+          type: string
+          required: true
+        - 
+          in: body
+          name: body
+          required: true
+          schema:
+            id : jobs
+            required:
+              - jobTitle
+              - jobDesc
+              - jobRate
+              - latitude
+              - longitude
+            properties:
+              jobTitle:
+                type: string
+              jobDesc:
+                type: string
+              jobRate:
+                type: string
+              latitude:
+                type: string
+              longitude:
+                type: string
+    responses:
+      200:
+        description: Job Created.
+      404:
+        description: Invalid Credentials.

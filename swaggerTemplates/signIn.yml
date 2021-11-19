@@ -1,0 +1,19 @@
+    description: SigIn.
+    components:
+        securitySchemes:
+            BasicAuth:
+              type: basic
+    security:
+        - 
+          basicAuth: []
+    parameters:
+        - 
+          in: header
+          name: Authorization
+          type: string
+          required: true
+    responses:
+      200:
+        description: Sign In Successfully.
+      401:
+        description: Invalid Credentials.

@@ -1,0 +1,30 @@
+    description: All Jobs Data.
+    parameters:
+        - 
+          name: x-access-tokens
+          in: header
+          type: string
+          required: true
+        - 
+          in: query
+          name: kilometer
+          required: false
+          schema:
+            type: string
+        - 
+          in: query
+          name: lat
+          required: false
+          schema:
+            type: string
+        - 
+          in: query
+          name: longi
+          required: false
+          schema:
+            type: string
+    responses:
+      200:
+        description: All Jobs.
+      404:
+        description: No Data found.

@@ -1,0 +1,17 @@
+    description: Delete a Job.
+    parameters:
+        - 
+          name: x-access-tokens
+          in: header
+          type: string
+          required: true
+        - 
+          in: path
+          name: id
+          type: string
+          required: true
+    responses:
+      200:
+        description: Job Deleted by is_active flag.
+      404:
+        description: No Jobs found.
