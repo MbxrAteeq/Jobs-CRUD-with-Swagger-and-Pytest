@@ -2,7 +2,6 @@ import os
 import re
 import datetime
 import jwt as jwt1
-import geopy.distance 
 from apispec import APISpec
 from functools import wraps
 from flasgger import Swagger
@@ -15,8 +14,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:MA5xy6ZR149er@localhost:5432/jobs"
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:://' + os.environ.get('USER') + ':' + os.environ.get('PASSWORD') + '@' + os.environ.get('HOST') + ':5432/' + os.environ.get('DATABASE')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:://' + os.environ.get('USER') + ':' + os.environ.get('PASSWORD') + '@' + os.environ.get('HOST') + ':5432/' + os.environ.get('DATABASE')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
@@ -130,8 +128,8 @@ def signIn():
     """
     auth = request.authorization
 
-    if not auth or not auth.username or not auth.password: 
-        return jsonify('could not verify', 401, {'Authentication': 'login required"'})   
+    if not auth or not auth.username or not auth.password:
+        return jsonify({'Authentication': 'login required"'}), 401
     user = Users.query.filter_by(userName=auth.username).first()
 
     if not user:
