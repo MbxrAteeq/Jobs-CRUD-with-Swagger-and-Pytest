@@ -1,0 +1,43 @@
+    description: Update Job Data.
+    parameters:
+        - 
+          name: x-access-tokens
+          in: header
+          type: string
+          required: true
+        - 
+          in: path
+          name: id
+          type: string
+          required: true
+        - 
+          in: body
+          name: body
+          required: true
+          schema:
+            id : jobs
+            required:
+              - jobTitle
+              - jobDesc
+              - jobRate
+              - latitude
+              - longitude
+              - isActive
+            properties:
+              jobTitle:
+                type: string
+              jobDesc:
+                type: string
+              jobRate:
+                type: string
+              latitude:
+                type: string
+              longitude:
+                type: string
+              isActive:
+                type: boolean
+    responses:
+      200:
+        description: Job Added Successfully.
+      404:
+        description: Something is Wrong.
