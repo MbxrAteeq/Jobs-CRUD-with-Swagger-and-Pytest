@@ -1,5 +1,5 @@
 # Jobs-CRUD-with-Swagger-and-Pytest
-Jobs CRUD Operation with the filter of nearby jobs, Jwt auth, Swagger Documentation, and testing. (CodeGraphers Assessment Test)
+Jobs CRUD Operation with the filter of nearby jobs, Jwt auth, Swagger Documentation, and testing.
 Swagger API:
 http://localhost:5000/apidocs/
 
